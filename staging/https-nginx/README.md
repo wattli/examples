@@ -52,4 +52,14 @@ Then in another pod, you can access it with:
 [lita]$ k exec productpage-v1-579987d6b9-qmf6f -c istio-proxy -- curl https://10.11.251.5:443 -k
 ```
 
+Then you can inject side-car to the app by 
+```sh
+k delete -f nginx-app.yaml
+```
+And then
+```sh
+kubectl apply -f <(bin/istioctl kube-inject --debug -f nginx-app.yaml)
+```
 For more info, please refer to the doc in original repo
+
+
