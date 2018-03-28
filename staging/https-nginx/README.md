@@ -10,8 +10,6 @@ First generate a self signed rsa key and certificate that the server can use for
 
 ```sh
 $ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /d/tmp/nginx.key -out /d/tmp/nginx.crt -subj "/CN=my-nginx/O=my-nginx"
-
-$ k create secret tls nginxsecret  --key /tmp/nginx.key --cert /tmp/nginx.crt
 ```
 
 ### Create a https nginx application running in a kubernetes cluster
@@ -43,24 +41,22 @@ replicationcontroller "my-nginx" created
 Then, find the node port that Kubernetes is using for http and https traffic.
 
 ```sh
-$ kubectl get service nginxsvc -o json
-...
-                    {
-                        "name": "http",
-                        "protocol": "TCP",
-                        "port": 80,
-                        "targetPort": 80,
-                        "nodePort": 32211
-                    },
-                    {
-                        "name": "https",
-                        "protocol": "TCP",
-                        "port": 443,
-                        "targetPort": 443,
-                        "nodePort": 30028
-                    }
-...
+$ kubectl get service nginxsvc 
+
+NAME       TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
+nginxsvc   NodePort   10.11.251.5   <none>        80:30308/TCP,443:30860/TCP   2h
 ```
+
+Then in another pod, you can access it with:
+```sh
+[lita]$ k exec productpage-v1-579987d6b9-qmf6f -c istio-proxy -- curl https://10.11.251.5:443 -k
+```
+
+
+
+
+
+
 
 If you are using Kubernetes on a cloud provider, you may need to create cloud firewall rules to serve traffic.
 If you are using GCE or GKE, you can use the following commands to add firewall rules.
