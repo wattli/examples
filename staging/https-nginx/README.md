@@ -10,6 +10,8 @@ First generate a self signed rsa key and certificate that the server can use for
 
 ```sh
 $ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /d/tmp/nginx.key -out /d/tmp/nginx.crt -subj "/CN=my-nginx/O=my-nginx"
+
+$ k create secret tls nginxsecret  --key /tmp/nginx.key --cert /tmp/nginx.crt
 ```
 
 ### Create a https nginx application running in a kubernetes cluster
